@@ -1,3 +1,6 @@
 venv/*
 .idea/*
 .env
+images/*
+nasa_pics/*
+
