@@ -2,6 +2,6 @@ venv/*
 .idea/*
 .env
 apod/*
-nasa_pics/*
+spacex/*
 epic/*
 
