@@ -1,8 +1,10 @@
 import requests
 from os import getenv
+from datetime import datetime
 from pathlib import Path
-from urllib.parse import urlsplit, unquote
+from urllib.parse import urlsplit, unquote, urlencode
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -51,14 +53,28 @@ def fetch_apod_pictures(count):
               "count": count}
     data = get_json_data(url, params)
     links = [pic_data["url"]
-             for pic_data in data if "url" in pic_data]
+             for pic_data in data if  pic_data["media_type"] == "image"]
     for img_number, img_url in enumerate(links):
         save_img(img_url, APOD_DIR_NAME, img_number)
+
+
+def fetch_epic_pictures(count):
+    natural_url = "https://api.nasa.gov/EPIC/api/natural"
+    params = {"api_key": getenv("NASA_API_KEY")}
+    epics = get_json_data(natural_url, params)
+    epics = epics[:count] if len(epics) > count else epics
+    for epic in epics:
+        epic_date = datetime.fromisoformat(epic["date"])
+        epic_image = epic["image"]
+        img_url = f"https://api.nasa.gov/EPIC/archive/natural/{epic_date.year}/{epic_date.month}/{epic_date.day}/" \
+                  f"png/{epic_image}.png?{urlencode(params)}"
+        save_img(img_url, EPIC_DIR_NAME, epic_image)
 
 
 def main():
     fetch_spacex_last_launch()
     fetch_apod_pictures(50)
+    fetch_epic_pictures(5)
 
 
 if __name__ == "__main__":
