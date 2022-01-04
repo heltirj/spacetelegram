@@ -9,7 +9,7 @@ from photo_loader import SPACEX_DIR_NAME, APOD_DIR_NAME, EPIC_DIR_NAME, get_fold
 
 load_dotenv()
 
-CHANNEL_NAME = "@space_telegram"
+CHANNEL_NAME = getenv("CHANNEL_NAME")
 
 
 def parse_delay():
