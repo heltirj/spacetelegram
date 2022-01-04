@@ -4,4 +4,4 @@ venv/*
 apod/*
 spacex/*
 epic/*
-
+.DS_Store
