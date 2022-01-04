@@ -1,10 +1,14 @@
 import requests
-from os import getenv
+import time
+from random import shuffle
+from os import getenv, listdir
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlsplit, unquote, urlencode
 from dotenv import load_dotenv
 from telegram import Bot
+from pytimeparse.timeparse import timeparse
+
 
 load_dotenv()
 
@@ -12,6 +16,12 @@ SPACEX_DIR_NAME = "spacex"
 APOD_DIR_NAME = "apod"
 EPIC_DIR_NAME = "epic"
 CHANNEL_NAME = "@space_telegram"
+
+
+def get_folder_path(folder_name):
+    folder_path = Path(__file__).parent.absolute() / folder_name
+    Path(folder_path).mkdir(parents=True, exist_ok=True)
+    return folder_path
 
 
 def get_json_data(url, params=None):
@@ -24,9 +34,15 @@ def parse_img_ext(img_url):
     return Path(unquote(urlsplit(img_url).path)).suffix
 
 
+def parse_delay():
+    delay = getenv("DELAY")
+    if delay is None or timeparse(delay) is None:
+        return timeparse("24h")
+    return timeparse(delay)
+
+
 def save_img(img_url, folder_name, file_name):
-    folder_path = Path(__file__).parent.absolute() / folder_name
-    Path(folder_path).mkdir(parents=True, exist_ok=True)
+    folder_path = get_folder_path(folder_name)
     response = requests.get(img_url)
     response.raise_for_status()
     file_path = folder_path / f"{file_name}{parse_img_ext(img_url)}"
@@ -72,17 +88,28 @@ def fetch_epic_pictures(count):
         save_img(img_url, EPIC_DIR_NAME, epic_image)
 
 
-def post_in_channel():
-    bot = Bot(token=getenv('BOT_TOKEN'))
-    bot.send_message(text="Привет, граждане!", chat_id=CHANNEL_NAME)
+def post_photo(bot, photo_path):
+    bot.send_photo(chat_id=CHANNEL_NAME, photo=open(photo_path, 'rb'), timeout=300)
+
+
+def post_delay(bot):
+    bot.send_message(chat_id=CHANNEL_NAME, text=f"Задержка постинга фото: {parse_delay()} секунд")
 
 
 def main():
-    fetch_spacex_last_launch()
-    fetch_apod_pictures(50)
-    fetch_epic_pictures(5)
+    content = []
+    for folder_name in [SPACEX_DIR_NAME, APOD_DIR_NAME, EPIC_DIR_NAME]:
+        folder_items = [get_folder_path(folder_name) / filename
+                        for filename in listdir(get_folder_path(folder_name))]
+        content.extend(folder_items)
+    shuffle(content)
+    bot = Bot(token=getenv('BOT_TOKEN'))
+    delay = parse_delay()
+    post_delay(bot)
+    for photo_path in content:
+        post_photo(bot, photo_path)
+        time.sleep(delay)
 
 
 if __name__ == "__main__":
-    # main()
-    post_in_channel()
+    main()
