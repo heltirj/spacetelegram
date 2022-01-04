@@ -4,13 +4,14 @@ from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlsplit, unquote, urlencode
 from dotenv import load_dotenv
-
+from telegram import Bot
 
 load_dotenv()
 
 SPACEX_DIR_NAME = "spacex"
 APOD_DIR_NAME = "apod"
 EPIC_DIR_NAME = "epic"
+CHANNEL_NAME = "@space_telegram"
 
 
 def get_json_data(url, params=None):
@@ -71,6 +72,11 @@ def fetch_epic_pictures(count):
         save_img(img_url, EPIC_DIR_NAME, epic_image)
 
 
+def post_in_channel():
+    bot = Bot(token=getenv('BOT_TOKEN'))
+    bot.send_message(text="Привет, граждане!", chat_id=CHANNEL_NAME)
+
+
 def main():
     fetch_spacex_last_launch()
     fetch_apod_pictures(50)
@@ -78,4 +84,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    post_in_channel()
