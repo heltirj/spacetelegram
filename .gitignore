@@ -5,3 +5,4 @@ apod/*
 spacex/*
 epic/*
 .DS_Store
+__pycache__/*
