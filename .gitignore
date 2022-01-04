@@ -1,7 +1,4 @@
 venv/*
 .idea/*
 .env
-apod/*
-spacex/*
-epic/*
 .DS_Store
