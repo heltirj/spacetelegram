@@ -27,11 +27,11 @@ python3 photo_loader.py
 Затем создайте телеграм-канал, в который Вы будете постить фотографии космоса. 
 Добавьте в файл .env строчку
 ```
-NASA_API_KEY=<Ссылка на Ваш канал>
+CHANNEL_NAME=<Ссылка на Ваш канал>
 ```
 Например, если ссылка на Ваш канал - @space_telegram, нужно написать
 ```
-NASA_API_KEY=@space_telegram 
+CHANNEL_NAME=@space_telegram
 ```
 Для автоматизации постинга фотографий в канал создаём бота c помощью [этой](https://botcreators.ru/blog/botfather-instrukciya/) инструкции.  Полученный от BotFather токен добавляем в .env:
 ```
