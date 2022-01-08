@@ -13,9 +13,7 @@ EPIC_DIR_NAME = "epic"
 
 
 def get_folder_path(folder_name):
-    folder_path = Path(__file__).parent.absolute() / folder_name
-    Path(folder_path).mkdir(parents=True, exist_ok=True)
-    return folder_path
+    return Path(__file__).parent.absolute() / folder_name
 
 
 def get_json_data(url, params=None):
@@ -81,13 +79,16 @@ def fetch_epic_pictures(count, nasa_api_key):
 def main():
     load_dotenv()
     for folder in [SPACEX_DIR_NAME, APOD_DIR_NAME, EPIC_DIR_NAME]:
-        rmtree(get_folder_path(folder))
+        folder_path = get_folder_path(folder)
+        if folder_path.is_dir():
+            rmtree(get_folder_path(folder))
+        Path(get_folder_path(folder)).mkdir(parents=True, exist_ok=True)
     nasa_api_key = getenv("NASA_API_KEY")
     fetch_spacex_last_launch()
     fetch_apod_pictures(5, nasa_api_key)
     fetch_epic_pictures(5, nasa_api_key)
+    print("Photos successfull loaded")
 
 
 if __name__ == "__main__":
     main()
-    print("Photos successfull loaded")
