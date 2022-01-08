@@ -17,9 +17,10 @@ def main():
     bot = Bot(token=getenv('BOT_TOKEN'))
     content = []
     for folder_name in [SPACEX_DIR_NAME, APOD_DIR_NAME, EPIC_DIR_NAME]:
-        folder_items = [get_folder_path(folder_name) / filename
+        if get_folder_path(folder_name).is_dir():
+            folder_items = [get_folder_path(folder_name) / filename
                         for filename in listdir(get_folder_path(folder_name))]
-        content.extend(folder_items)
+            content.extend(folder_items)
     shuffle(content)
     delay = parse_delay(getenv('DELAY'))
     channel_name = getenv('CHANNEL_NAME')
