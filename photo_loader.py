@@ -43,13 +43,13 @@ def get_spacex_image_links():
             return launch["links"]["flickr_images"]
 
 
-def fetch_spacex_last_launch():
+def fetch_spacex_last_launch(folder_path):
     links = get_spacex_image_links()
     for img_number, img_url in enumerate(links):
-        save_img(img_url, SPACEX_DIR_NAME, img_number)
+        save_img(img_url, folder_path, img_number)
 
 
-def fetch_apod_pictures(count, nasa_api_key):
+def fetch_apod_pictures(count, nasa_api_key, folder_path):
     url = "https://api.nasa.gov/planetary/apod"
     params = {"api_key": nasa_api_key,
               "count": count}
@@ -57,10 +57,10 @@ def fetch_apod_pictures(count, nasa_api_key):
     links = [pic_data["url"]
              for pic_data in apods if  pic_data["media_type"] == "image"]
     for img_number, img_url in enumerate(links):
-        save_img(img_url, APOD_DIR_NAME, img_number)
+        save_img(img_url, folder_path, img_number)
 
 
-def fetch_epic_pictures(count, nasa_api_key):
+def fetch_epic_pictures(count, nasa_api_key, folder_path):
     natural_url = "https://api.nasa.gov/EPIC/api/natural"
     params = {"api_key": nasa_api_key}
     epics = get_json(natural_url, params)
@@ -73,7 +73,7 @@ def fetch_epic_pictures(count, nasa_api_key):
         day = datetime.strftime(epic_date, "%d")
         img_url = f"https://api.nasa.gov/EPIC/archive/natural/{year}/{month}/{day}/" \
                   f"png/{epic_image}.png?{urlencode(params)}"
-        save_img(img_url, EPIC_DIR_NAME, epic_image)
+        save_img(img_url, folder_path, epic_image)
 
 
 def main():
@@ -84,9 +84,9 @@ def main():
             rmtree(get_folder_path(folder))
         Path(get_folder_path(folder)).mkdir(parents=True, exist_ok=True)
     nasa_api_key = getenv("NASA_API_KEY")
-    fetch_spacex_last_launch()
-    fetch_apod_pictures(50, nasa_api_key)
-    fetch_epic_pictures(5, nasa_api_key)
+    fetch_spacex_last_launch(SPACEX_DIR_NAME)
+    fetch_apod_pictures(50, nasa_api_key, APOD_DIR_NAME)
+    fetch_epic_pictures(5, nasa_api_key, EPIC_DIR_NAME)
     print("Photos successfull loaded")
 
 
