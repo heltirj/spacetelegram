@@ -12,14 +12,6 @@ def parse_delay(str_delay):
     return timeparse("24h")
 
 
-def post_photo(bot, channel_name, photo_path):
-    bot.send_photo(chat_id=channel_name, photo=open(photo_path, 'rb'), timeout=300)
-
-
-def post_text(bot, channel_name, text):
-    bot.send_message(chat_id=channel_name, text=text)
-
-
 def main():
     load_dotenv()
     bot = Bot(token=getenv('BOT_TOKEN'))
@@ -31,9 +23,9 @@ def main():
     shuffle(content)
     delay = parse_delay(getenv('DELAY'))
     channel_name = getenv('CHANNEL_NAME')
-    post_text(bot, channel_name, f"Задержка постинга фото: {delay} секунд")
+    bot.send_message(chat_id=channel_name,  text=f"Задержка постинга фото: {delay} секунд")
     for photo_path in content:
-        post_photo(bot, channel_name, photo_path)
+        bot.send_photo(chat_id=channel_name, photo=open(photo_path, 'rb'), timeout=300)
         time.sleep(delay)
 
 
