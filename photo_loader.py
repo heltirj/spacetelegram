@@ -16,7 +16,7 @@ def get_folder_path(folder_name):
     return Path(__file__).parent.absolute() / folder_name
 
 
-def get_json_data(url, params=None):
+def get_json(url, params=None):
     response = requests.get(url, params=params)
     response.raise_for_status()
     return response.json()
@@ -37,7 +37,7 @@ def save_img(img_url, folder_name, file_name):
 
 def get_spacex_image_links():
     url = "https://api.spacexdata.com/v3/launches"
-    launches = get_json_data(url)
+    launches = get_json(url)
     for launch in reversed(launches):
         if len(launch["links"]["flickr_images"]) != 0:
             return launch["links"]["flickr_images"]
@@ -53,9 +53,9 @@ def fetch_apod_pictures(count, nasa_api_key):
     url = "https://api.nasa.gov/planetary/apod"
     params = {"api_key": nasa_api_key,
               "count": count}
-    data = get_json_data(url, params)
+    apods = get_json(url, params)
     links = [pic_data["url"]
-             for pic_data in data if  pic_data["media_type"] == "image"]
+             for pic_data in apods if  pic_data["media_type"] == "image"]
     for img_number, img_url in enumerate(links):
         save_img(img_url, APOD_DIR_NAME, img_number)
 
@@ -63,7 +63,7 @@ def fetch_apod_pictures(count, nasa_api_key):
 def fetch_epic_pictures(count, nasa_api_key):
     natural_url = "https://api.nasa.gov/EPIC/api/natural"
     params = {"api_key": nasa_api_key}
-    epics = get_json_data(natural_url, params)
+    epics = get_json(natural_url, params)
     epics = epics[:count] if len(epics) > count else epics
     for epic in epics:
         epic_date = datetime.fromisoformat(epic["date"])
