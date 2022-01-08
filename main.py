@@ -26,7 +26,8 @@ def main():
     channel_name = getenv('CHANNEL_NAME')
     bot.send_message(chat_id=channel_name,  text=f"Задержка постинга фото: {delay} секунд")
     for photo_path in content:
-        bot.send_photo(chat_id=channel_name, photo=open(photo_path, 'rb'), timeout=300)
+        with open(photo_path, 'rb') as photo_file:
+            bot.send_photo(chat_id=channel_name, photo=photo_file, timeout=300)
         time.sleep(delay)
 
 
