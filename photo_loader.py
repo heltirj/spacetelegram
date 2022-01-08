@@ -39,7 +39,7 @@ def get_spacex_image_links():
     url = "https://api.spacexdata.com/v3/launches"
     launches = get_json(url)
     for launch in reversed(launches):
-        if len(launch["links"]["flickr_images"]) != 0:
+        if launch["links"]["flickr_images"]:
             return launch["links"]["flickr_images"]
 
 
@@ -85,7 +85,7 @@ def main():
         Path(get_folder_path(folder)).mkdir(parents=True, exist_ok=True)
     nasa_api_key = getenv("NASA_API_KEY")
     fetch_spacex_last_launch()
-    fetch_apod_pictures(5, nasa_api_key)
+    fetch_apod_pictures(50, nasa_api_key)
     fetch_epic_pictures(5, nasa_api_key)
     print("Photos successfull loaded")
 
