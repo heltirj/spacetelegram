@@ -7,8 +7,6 @@ from urllib.parse import unquote, urlsplit, urlencode
 from dotenv import load_dotenv
 
 
-load_dotenv()
-
 SPACEX_DIR_NAME = "spacex"
 APOD_DIR_NAME = "apod"
 EPIC_DIR_NAME = "epic"
@@ -53,9 +51,9 @@ def fetch_spacex_last_launch():
         save_img(img_url, SPACEX_DIR_NAME, img_number)
 
 
-def fetch_apod_pictures(count):
+def fetch_apod_pictures(count, nasa_api_key):
     url = "https://api.nasa.gov/planetary/apod"
-    params = {"api_key": getenv("NASA_API_KEY"),
+    params = {"api_key": nasa_api_key,
               "count": count}
     data = get_json_data(url, params)
     links = [pic_data["url"]
@@ -64,9 +62,9 @@ def fetch_apod_pictures(count):
         save_img(img_url, APOD_DIR_NAME, img_number)
 
 
-def fetch_epic_pictures(count):
+def fetch_epic_pictures(count, nasa_api_key):
     natural_url = "https://api.nasa.gov/EPIC/api/natural"
-    params = {"api_key": getenv("NASA_API_KEY")}
+    params = {"api_key": nasa_api_key}
     epics = get_json_data(natural_url, params)
     epics = epics[:count] if len(epics) > count else epics
     for epic in epics:
@@ -80,10 +78,16 @@ def fetch_epic_pictures(count):
         save_img(img_url, EPIC_DIR_NAME, epic_image)
 
 
-if __name__ == "__main__":
+def main():
+    load_dotenv()
     for folder in [SPACEX_DIR_NAME, APOD_DIR_NAME, EPIC_DIR_NAME]:
         rmtree(get_folder_path(folder))
+    nasa_api_key = getenv("NASA_API_KEY")
     fetch_spacex_last_launch()
-    fetch_apod_pictures(50)
-    fetch_epic_pictures(5)
+    fetch_apod_pictures(5, nasa_api_key)
+    fetch_epic_pictures(5, nasa_api_key)
+
+
+if __name__ == "__main__":
+    main()
     print("Photos successfull loaded")
