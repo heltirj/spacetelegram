@@ -6,9 +6,10 @@ from telegram import Bot
 from pytimeparse.timeparse import timeparse
 from photo_loader import SPACEX_DIR_NAME, APOD_DIR_NAME, EPIC_DIR_NAME, get_folder_path
 
-def parse_delay(str_delay):
-    if str_delay and timeparse(str_delay):
-        return timeparse(str_delay)
+def parse_delay(delay):
+    parsed_delay = timeparse(delay)
+    if delay and parsed_delay:
+        return parsed_delay
     return timeparse("24h")
 
 
