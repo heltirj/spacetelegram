@@ -81,8 +81,8 @@ def main():
     for folder in [SPACEX_DIR_NAME, APOD_DIR_NAME, EPIC_DIR_NAME]:
         folder_path = get_folder_path(folder)
         if folder_path.is_dir():
-            rmtree(get_folder_path(folder))
-        Path(get_folder_path(folder)).mkdir(parents=True, exist_ok=True)
+            rmtree(folder_path)
+        Path(folder_path).mkdir(parents=True, exist_ok=True)
     nasa_api_key = getenv("NASA_API_KEY")
     fetch_spacex_last_launch(SPACEX_DIR_NAME)
     fetch_apod_pictures(50, nasa_api_key, APOD_DIR_NAME)
